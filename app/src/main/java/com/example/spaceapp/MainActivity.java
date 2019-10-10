@@ -21,6 +21,23 @@ import com.example.spaceapp.spaceitems.Resource;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
+    private Empire empire;
+    private Map<String, Resource> resources;
+    // planet info
+    private TextView planetName;
+    private TextView woodText;
+    private TextView waterText;
+    private TextView stoneText;
+    // empire info
+    private TextView empireName;
+    private TextView empireWoodText;
+    private TextView empireStoneText;
+    private TextView empireWaterText;
+    // planets view
+    private ImageView earthView;
+    private ImageView marsView;
+    private ImageView neptuneView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,46 +46,75 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Empire empire = new Empire("Awesome Empire");
+        this.empire = new Empire("Awesome Empire");
 
-        Map<String, Resource> resources = empire.getResources();
-        Resource empireWood = resources.get("Wood");
-        Resource empireStone = resources.get("Stone");
-        Resource empireWater = resources.get("Water");
+        this.resources = this.empire.getResources();
+        Resource empireWood = this.resources.get("Wood");
+        Resource empireStone = this.resources.get("Stone");
+        Resource empireWater = this.resources.get("Water");
 
         final Planet Earth = new Planet("Earth");
         final Planet Mars = new Planet("Mars");
         final Planet Neptune = new Planet("Neptune");
 
         LayoutInflater inflater = getLayoutInflater();
+        LinearLayout l1 = findViewById(R.id.planetInfo);
+        LinearLayout l2 = findViewById(R.id.empireInfo);
+
         View planetView = inflater.inflate(R.layout.planet_layout, null);
         View empireView = inflater.inflate(R.layout.empire_layout, null);
 
-        LinearLayout l1 = findViewById(R.id.planetInfo);
         l1.addView(planetView);
-        LinearLayout l2 = findViewById(R.id.empireInfo);
         l2.addView(empireView);
 
-        TextView empireName = findViewById(R.id.empireText);
-        empireName.setText(empire.getName());
+        this.empireName = findViewById(R.id.empireText);
+        this.empireName.setText(this.empire.getName());
 
-        TextView empireWoodText = findViewById(R.id.empireWoodText);
-        empireWoodText.setText(Integer.toString(empireWood.getAmount()));
-        TextView empireStoneText = findViewById(R.id.empireStoneText);
-        empireStoneText.setText(Integer.toString(empireStone.getAmount()));
-        TextView empireWaterText = findViewById(R.id.empireWaterText);
-        empireWaterText.setText(Integer.toString(empireWater.getAmount()));
+        this.planetName = findViewById(R.id.planetName);
+        this.woodText = findViewById(R.id.woodText);
+        this.waterText = findViewById(R.id.waterText);
+        this.stoneText = findViewById(R.id.stoneText);
 
-        ImageView earthView = findViewById(R.id.imageEarth);
-        earthView.setOnClickListener(new View.OnClickListener() {
+        this.empireWoodText = findViewById(R.id.empireWoodText);
+        this.empireStoneText = findViewById(R.id.empireStoneText);
+        this.empireWaterText = findViewById(R.id.empireWaterText);
+
+        this.empireWoodText.setText(Integer.toString(empireWood.getAmount()));
+        this.empireStoneText.setText(Integer.toString(empireStone.getAmount()));
+        this.empireWaterText.setText(Integer.toString(empireWater.getAmount()));
+
+        this.earthView = findViewById(R.id.imageEarth);
+        this.marsView = findViewById(R.id.imageMars);
+        this.neptuneView = findViewById(R.id.imageNeptune);
+
+        this.earthView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println(Earth.getName());
+                setPlanetInfo(Earth);
+            }
+        });
+        this.marsView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setPlanetInfo(Mars);
+            }
+        });
+        this.neptuneView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setPlanetInfo(Neptune);
             }
         });
     }
 
-        @Override
+    public void setPlanetInfo(Planet planet){
+        this.planetName.setText(planet.getName());
+        this.woodText.setText(Integer.toString(planet.getResources().get("Wood").getAmount()));
+        this.stoneText.setText(Integer.toString(planet.getResources().get("Stone").getAmount()));
+        this.waterText.setText(Integer.toString(planet.getResources().get("Water").getAmount()));
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
