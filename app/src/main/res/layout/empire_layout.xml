@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/empireText"
+        android:layout_width="97dp"
+        android:layout_height="68dp"
+        android:layout_marginStart="16dp"
+        android:text="Empire"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/empireWoodVIew"
+        android:layout_width="51dp"
+        android:layout_height="44dp"
+        app:layout_constraintStart_toEndOf="@+id/empireText"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/wood" />
+
+    <TextView
+        android:id="@+id/empireWoodText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Wood"
+        app:layout_constraintStart_toEndOf="@+id/empireWoodVIew"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/empireStoneVIew"
+        android:layout_width="46dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toEndOf="@+id/empireWoodText"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/stone" />
+
+    <TextView
+        android:id="@+id/empireStoneText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Stone"
+        app:layout_constraintStart_toEndOf="@+id/empireStoneVIew"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/empireWaterView"
+        android:layout_width="42dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toEndOf="@+id/empireStoneText"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/water" />
+
+    <TextView
+        android:id="@+id/empireWaterText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Water"
+        app:layout_constraintStart_toEndOf="@+id/empireWaterView"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
