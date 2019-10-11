@@ -11,14 +11,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.spaceapp.spaceitems.Planet;
 import com.example.spaceapp.spaceitems.Resource;
+import com.example.spaceapp.spaceitems.Spaceship;
 
 import java.util.Map;
+
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 public class MainActivity extends AppCompatActivity {
     private Empire empire;
@@ -37,7 +42,10 @@ public class MainActivity extends AppCompatActivity {
     private ImageView earthView;
     private ImageView marsView;
     private ImageView neptuneView;
-
+    // spaceship info
+    private Button captureButton;
+    private Spaceship spaceship;
+    private TextView spaceshipText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +74,12 @@ public class MainActivity extends AppCompatActivity {
 
         l1.addView(planetView);
         l2.addView(empireView);
+
+        this.spaceship = new Spaceship();
+        this.spaceshipText = findViewById(R.id.spaceshipText);
+
+        this.captureButton = findViewById(R.id.captureButton);
+        this.captureButton.setVisibility(GONE);
 
         this.empireName = findViewById(R.id.empireText);
         this.empireName.setText(this.empire.getName());
@@ -107,11 +121,46 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void setPlanetInfo(Planet planet){
+    public void setPlanetInfo(final Planet planet){
         this.planetName.setText(planet.getName());
         this.woodText.setText(Integer.toString(planet.getResources().get("Wood").getAmount()));
         this.stoneText.setText(Integer.toString(planet.getResources().get("Stone").getAmount()));
         this.waterText.setText(Integer.toString(planet.getResources().get("Water").getAmount()));
+
+        if (!planet.isCaptured() && this.spaceship.isReady()){
+            this.captureButton.setVisibility(VISIBLE);
+            this.captureButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    spaceship.capture(planet);
+                    planet.capture();
+
+                    // TODO: add async
+                    Thread t = new Thread(new Runnable() { public void run() {
+                        while(!spaceship.isReady()){
+                            spaceship.tick();
+                            try {
+                                Thread.sleep(1000);
+                            }
+                            catch (Exception e){
+                                e.printStackTrace();
+                            }
+                            System.out.println(spaceship.getTimeLeft());
+                            MainActivity.this.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    spaceshipText.setText(Integer.toString(spaceship.getTimeLeft()));
+                                }
+                            });
+
+                        }
+                    }});
+
+                    t.run();
+                }
+            });
+        } else {
+            this.captureButton.setVisibility(GONE);
+        }
     }
 
     @Override

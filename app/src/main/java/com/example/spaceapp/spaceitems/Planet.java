@@ -9,11 +9,13 @@ public class Planet {
     private int distance;
     private Map<String, Resource> resourcesMap;
     private List<Building> buildings;
+    private boolean captured;
 
     public Planet(String planetName){
         this.name = planetName;
         this.distance = 30;
         this.buildings = null;
+        this.captured = false;
 
         Resource wood = new Resource("Wood", 1000);
         Resource stone = new Resource("Stone", 1000);
@@ -39,6 +41,14 @@ public class Planet {
 
     public List<Building> getBuildings(){
         return this.buildings;
+    }
+
+    public void capture(){
+        this.captured = true;
+    }
+
+    public boolean isCaptured(){
+        return this.captured;
     }
 
 }

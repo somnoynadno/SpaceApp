@@ -2,18 +2,32 @@ package com.example.spaceapp.spaceitems;
 
 public class Spaceship {
     private Planet targetPlanet;
-    private boolean isReady;
+    private boolean ready;
     private int timeLeft;
 
     public Spaceship(){
         this.targetPlanet = null;
-        this.isReady = true;
+        this.ready = true;
         this.timeLeft = 0;
     }
 
     public void capture(Planet planet){
         this.targetPlanet = planet;
-        this.isReady = false;
+        this.ready = false;
         this.timeLeft = planet.getDistance();
+        System.out.println("capture " + planet.getName());
+    }
+
+    public boolean isReady(){
+        return this.ready;
+    }
+
+    public void tick(){
+        this.timeLeft--;
+        if (this.timeLeft == 0) this.ready = true;
+    }
+
+    public int getTimeLeft(){
+        return this.timeLeft;
     }
 }
