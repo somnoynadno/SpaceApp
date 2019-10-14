@@ -24,10 +24,18 @@ public class Spaceship {
 
     public void tick(){
         this.timeLeft--;
-        if (this.timeLeft == 0) this.ready = true;
+        if (this.timeLeft == 0){
+            this.ready = true;
+            this.targetPlanet.capture();
+            this.targetPlanet = null;
+        }
     }
 
     public int getTimeLeft(){
         return this.timeLeft;
+    }
+
+    public Planet getTargetPlanet(){
+        return this.targetPlanet;
     }
 }

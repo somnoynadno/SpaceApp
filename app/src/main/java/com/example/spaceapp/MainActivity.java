@@ -1,5 +1,6 @@
 package com.example.spaceapp;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.example.spaceapp.spaceitems.Empire;
@@ -33,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView woodText;
     private TextView waterText;
     private TextView stoneText;
+    private Button addWoodBuiling;
+    private Button addStoneBuiling;
+    private Button addWaterBuiling;
     // empire info
     private TextView empireName;
     private TextView empireWoodText;
@@ -89,6 +93,10 @@ public class MainActivity extends AppCompatActivity {
         this.waterText = findViewById(R.id.waterText);
         this.stoneText = findViewById(R.id.stoneText);
 
+        this.addStoneBuiling = findViewById(R.id.stoneButton);
+        this.addWaterBuiling = findViewById(R.id.waterButton);
+        this.addWoodBuiling = findViewById(R.id.woodButton);
+
         this.empireWoodText = findViewById(R.id.empireWoodText);
         this.empireStoneText = findViewById(R.id.empireStoneText);
         this.empireWaterText = findViewById(R.id.empireWaterText);
@@ -133,33 +141,51 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     spaceship.capture(planet);
-                    planet.capture();
 
-                    // TODO: add async
-                    Thread t = new Thread(new Runnable() { public void run() {
-                        while(!spaceship.isReady()){
-                            spaceship.tick();
-                            try {
-                                Thread.sleep(1000);
-                            }
-                            catch (Exception e){
-                                e.printStackTrace();
-                            }
-                            System.out.println(spaceship.getTimeLeft());
-                            MainActivity.this.runOnUiThread(new Runnable() {
-                                public void run() {
-                                    spaceshipText.setText(Integer.toString(spaceship.getTimeLeft()));
-                                }
-                            });
-
-                        }
-                    }});
-
-                    t.run();
+                    captureButton.setVisibility(GONE);
+                    SpaceshipAsyncTask asyncCapture = new SpaceshipAsyncTask();
+                    asyncCapture.execute();
                 }
             });
         } else {
             this.captureButton.setVisibility(GONE);
+        }
+
+        if (!planet.isCaptured()){
+            this.addStoneBuiling.setVisibility(GONE);
+            this.addWaterBuiling.setVisibility(GONE);
+            this.addWoodBuiling.setVisibility(GONE);
+        } else {
+            this.addStoneBuiling.setVisibility(VISIBLE);
+            this.addWaterBuiling.setVisibility(VISIBLE);
+            this.addWoodBuiling.setVisibility(VISIBLE);
+        }
+    }
+
+    private class SpaceshipAsyncTask extends AsyncTask<Spaceship, Integer, Integer> {
+        @Override
+        protected Integer doInBackground(Spaceship... parameter) {
+            while(!spaceship.isReady()) {
+                int myProgress = spaceship.getTimeLeft();
+                spaceship.tick();
+                try {
+                    Thread.sleep(1000);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+                publishProgress(myProgress);
+            }
+            return 0;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... progress) {
+            if (spaceship.getTimeLeft() != 0) {
+                spaceshipText.setText(Integer.toString(progress[0]) + " (" + spaceship.getTargetPlanet().getName() + ")");
+            } else{
+                spaceshipText.setText("Ready");
+            }
         }
     }
 
