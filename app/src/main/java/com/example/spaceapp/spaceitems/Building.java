@@ -12,7 +12,7 @@ public class Building {
         this.planet = myPlanet;
         this.type = buildingType;
         this.cost = 200;
-        this.level = 1;
+        this.level = 0;
         this.producingStatus = false;
         this.tempStorage = new Resource(type, 0);
     }
@@ -30,6 +30,7 @@ public class Building {
     }
 
     public void produce(){
+        System.out.println("Start producing");
         this.producingStatus = true;
     }
 
@@ -38,10 +39,22 @@ public class Building {
             int amount = this.level*10;
             planet.decreaseResource(this.type, amount);
             this.tempStorage.increase(amount);
+            if (planet.getResources().get(type).getAmount() <= 0){
+                this.producingStatus = false;
+            }
         }
     }
 
     public Resource getTempStorage(){
         return this.tempStorage;
+    }
+
+    public void levelUp(){
+        this.level += 1;
+        this.cost += 50;
+    }
+
+    public int getLevel(){
+        return this.level;
     }
 }

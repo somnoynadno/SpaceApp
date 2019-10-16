@@ -9,23 +9,31 @@ public class Planet {
     private String name;
     private int distance;
     private Map<String, Resource> resourcesMap;
-    private List<Building> buildings;
+    private Map<String, Building> buildings;
     private boolean captured;
 
     public Planet(String planetName){
         this.name = planetName;
         this.distance = 4;
-        this.buildings = new ArrayList<>();
         this.captured = false;
 
         Resource wood = new Resource("Wood", 1000);
         Resource stone = new Resource("Stone", 1000);
         Resource water = new Resource("Water", 1000);
 
+        Building woodBuilding = new Building(this, "Wood");
+        Building waterBuilding = new Building(this, "Water");
+        Building stoneBuilding = new Building(this, "Stone");
+
         this.resourcesMap = new HashMap<String, Resource>();
         this.resourcesMap.put("Wood", wood);
         this.resourcesMap.put("Stone", stone);
         this.resourcesMap.put("Water", water);
+
+        this.buildings = new HashMap<String, Building>();
+        this.buildings.put("Wood", woodBuilding);
+        this.buildings.put("Stone", stoneBuilding);
+        this.buildings.put("Water", waterBuilding);
     }
 
     public String getName(){
@@ -40,11 +48,7 @@ public class Planet {
         return this.distance;
     }
 
-    public void addBuilding(Building building){
-        this.buildings.add(building);
-    }
-
-    public List<Building> getBuildings(){
+    public Map<String, Building> getBuildings(){
         return this.buildings;
     }
 

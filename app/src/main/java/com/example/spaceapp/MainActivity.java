@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.spaceapp.spaceitems.Planet;
 import com.example.spaceapp.spaceitems.Resource;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private Empire empire;
     private Map<String, Resource> resources;
     private ProduceAsyncTask produceAsync;
+    private Planet selectedPlanet;
     private int TIME = 100000;
     // planet info
     private TextView planetName;
@@ -74,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         final Planet Earth = new Planet("Earth");
         final Planet Mars = new Planet("Mars");
         final Planet Neptune = new Planet("Neptune");
+        this.selectedPlanet = Earth;
 
         LayoutInflater inflater = getLayoutInflater();
         LinearLayout l1 = findViewById(R.id.planetInfo);
@@ -141,27 +144,28 @@ public class MainActivity extends AppCompatActivity {
 
         this.addStoneBuiling.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { createBuilding("Stone");
+            public void onClick(View v) { upgradeBuilding("Stone");
             }
         });
         this.addWaterBuiling.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { createBuilding("Water");
+            public void onClick(View v) { upgradeBuilding("Water");
             }
         });
         this.addWoodBuiling.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createBuilding("Wood");
+                upgradeBuilding("Wood");
             }
         });
 
-//        this.produceAsync = new ProduceAsyncTask();
-//        this.produceAsync.execute();
+        this.produceAsync = new ProduceAsyncTask();
+        this.produceAsync.execute();
     }
 
     public void setPlanetInfo(final Planet planet){
         this.planetName.setText(planet.getName());
+        this.selectedPlanet = planet;
         this.woodText.setText(Integer.toString(planet.getResources().get("Wood").getAmount()));
         this.stoneText.setText(Integer.toString(planet.getResources().get("Stone").getAmount()));
         this.waterText.setText(Integer.toString(planet.getResources().get("Water").getAmount()));
@@ -174,8 +178,37 @@ public class MainActivity extends AppCompatActivity {
                     spaceship.capture(planet);
 
                     captureButton.setVisibility(GONE);
-                    SpaceshipAsyncTask asyncCapture = new SpaceshipAsyncTask();
-                    asyncCapture.execute();
+
+                    Thread spaceshipThread = new Thread() {
+                        public void run() {
+                            while(!spaceship.isReady()) {
+                                int myProgress = spaceship.getTimeLeft();
+                                spaceship.tick();
+                                try {
+                                    Thread.sleep(1000);
+                                }
+                                catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                                final String text;
+                                if (spaceship.getTimeLeft() != 0) {
+                                    text = Integer.toString(myProgress) +
+                                            " (" + spaceship.getTargetPlanet().getName() + ")";
+                                } else{
+                                    text ="Ready";
+                                }
+                                MainActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        spaceshipText.setText(text);
+                                    }
+                                });
+                            }
+                            empire.addPlanet(spaceship.getTargetPlanet());
+                        }
+                    };
+
+                    spaceshipThread.start();
                 }
             });
         } else {
@@ -189,37 +222,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class SpaceshipAsyncTask extends AsyncTask<String, Integer, Integer> {
-        @Override
-        protected Integer doInBackground(String... parameter) {
-            while(!spaceship.isReady()) {
-                int myProgress = spaceship.getTimeLeft();
-                spaceship.tick();
-                try {
-                    Thread.sleep(1000);
-                }
-                catch (Exception e){
-                    e.printStackTrace();
-                }
-                publishProgress(myProgress);
-            }
-            empire.addPlanet(spaceship.getTargetPlanet());
-            return 0;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... progress) {
-            final String text;
-            if (spaceship.getTimeLeft() != 0) {
-                text = Integer.toString(progress[0]) +
-                                        " (" + spaceship.getTargetPlanet().getName() + ")";
-            } else{
-                text ="Ready";
-            }
-            spaceshipText.setText(text);
-        }
-    }
-
     private class ProduceAsyncTask extends AsyncTask<String, Integer, Integer> {
         @Override
         protected Integer doInBackground(String... parameter) {
@@ -228,18 +230,17 @@ public class MainActivity extends AppCompatActivity {
                 // for planet in planets
                 for (Planet planet : empire.getPlanets().values()){
                     // for building in planet
-                    for (Building b : planet.getBuildings()){
+                    for (Building b : planet.getBuildings().values()){
                         // produce
                         b.tick();
                         // add to Empire and clear storage
                         Resource tempRes = b.getTempStorage();
                         empire.getResources().get(tempRes.getType()).increase(tempRes.getAmount());
                         tempRes.decrease(tempRes.getAmount());
-                        System.out.println(empire.getResources().get(tempRes.getType()).getAmount());
                     }
                 }
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(2000);
                 }
                 catch (Exception e){
                     e.printStackTrace();
@@ -252,17 +253,33 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onProgressUpdate(Integer... progress) {
+            empireStoneText.setText(String.valueOf(empire.getResources().get("Stone").getAmount()));
+            empireWaterText.setText(String.valueOf(empire.getResources().get("Water").getAmount()));
+            empireWoodText.setText(String.valueOf(empire.getResources().get("Wood").getAmount()));
 
+            waterText.setText(String.valueOf(selectedPlanet.getResources().get("Water").getAmount()));
+            woodText.setText(String.valueOf(selectedPlanet.getResources().get("Wood").getAmount()));
+            stoneText.setText(String.valueOf(selectedPlanet.getResources().get("Stone").getAmount()));
+
+            waterBuildingsNum.setText(String.valueOf(selectedPlanet.getBuildings().get("Water").getLevel()));
+            woodBuildingsNum.setText(String.valueOf(selectedPlanet.getBuildings().get("Wood").getLevel()));
+            stoneBuildingsNum.setText(String.valueOf(selectedPlanet.getBuildings().get("Stone").getLevel()));
         }
     }
 
-    // TODO: check for balance
-    private void createBuilding(String type){
-        String name = this.planetName.getText().toString();
-        Planet planet = empire.getPlanets().get(name);
-        Building building = new Building(planet, type);
-        building.produce();
-        planet.addBuilding(building);
+    private void upgradeBuilding(String type){
+        Building selectedBuilding = this.selectedPlanet.getBuildings().get(type);
+        int cost = selectedBuilding.getCost();
+        Resource res = empire.getResources().get(type);
+        if (res.getAmount() >= cost) {
+            res.decrease(cost);
+            selectedBuilding.levelUp();
+            if (selectedBuilding.getLevel() == 1) selectedBuilding.produce();
+        } else {
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    "Недостаточно ресурсов!", Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 
     private void hidePlanetInfo(){
