@@ -7,12 +7,12 @@ import java.util.Map;
 
 public class Empire {
     private String name;
-    private List<Planet> planets;
+    private Map<String, Planet> planets;
     private Map<String, Resource> resourcesMap;
 
     public Empire(String empireName){
         this.name = empireName;
-        this.planets = new ArrayList<>();
+        this.planets = new HashMap<String, Planet>();
 
         Resource wood = new Resource("Wood", 200);
         Resource stone = new Resource("Stone", 200);
@@ -29,10 +29,10 @@ public class Empire {
     }
 
     public void addPlanet(Planet planet){
-        this.planets.add(planet);
+        this.planets.put(planet.getName(), planet);
     }
 
-    public List<Planet> getPlanets(){
+    public Map<String, Planet> getPlanets(){
         return this.planets;
     }
 

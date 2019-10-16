@@ -27,7 +27,6 @@ public class Spaceship {
         if (this.timeLeft == 0){
             this.ready = true;
             this.targetPlanet.capture();
-            this.targetPlanet = null;
         }
     }
 

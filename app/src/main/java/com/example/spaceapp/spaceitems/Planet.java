@@ -1,5 +1,6 @@
 package com.example.spaceapp.spaceitems;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +14,8 @@ public class Planet {
 
     public Planet(String planetName){
         this.name = planetName;
-        this.distance = 30;
-        this.buildings = null;
+        this.distance = 4;
+        this.buildings = new ArrayList<>();
         this.captured = false;
 
         Resource wood = new Resource("Wood", 1000);
@@ -39,6 +40,10 @@ public class Planet {
         return this.distance;
     }
 
+    public void addBuilding(Building building){
+        this.buildings.add(building);
+    }
+
     public List<Building> getBuildings(){
         return this.buildings;
     }
@@ -49,6 +54,10 @@ public class Planet {
 
     public boolean isCaptured(){
         return this.captured;
+    }
+
+    public void decreaseResource(String type, int amount){
+        this.resourcesMap.get(type).decrease(amount);
     }
 
 }

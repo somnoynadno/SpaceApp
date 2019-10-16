@@ -16,4 +16,12 @@ public class Resource {
     public String getType(){
         return this.type;
     }
+
+    public void decrease(int num){
+        this.amount -= num;
+    }
+
+    public void increase(int num){
+        this.amount += num;
+    }
 }

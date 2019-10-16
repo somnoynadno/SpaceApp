@@ -3,6 +3,7 @@ package com.example.spaceapp;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import com.example.spaceapp.spaceitems.Building;
 import com.example.spaceapp.spaceitems.Empire;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,6 +30,8 @@ import static android.view.View.VISIBLE;
 public class MainActivity extends AppCompatActivity {
     private Empire empire;
     private Map<String, Resource> resources;
+    private ProduceAsyncTask produceAsync;
+    private int TIME = 100000;
     // planet info
     private TextView planetName;
     private TextView woodText;
@@ -136,25 +139,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // TODO: add building type
         this.addStoneBuiling.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                createBuilding();
+            public void onClick(View v) { createBuilding("Stone");
             }
         });
         this.addWaterBuiling.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                createBuilding();
+            public void onClick(View v) { createBuilding("Water");
             }
         });
         this.addWoodBuiling.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createBuilding();
+                createBuilding("Wood");
             }
         });
+
+//        this.produceAsync = new ProduceAsyncTask();
+//        this.produceAsync.execute();
     }
 
     public void setPlanetInfo(final Planet planet){
@@ -186,9 +189,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class SpaceshipAsyncTask extends AsyncTask<Spaceship, Integer, Integer> {
+    private class SpaceshipAsyncTask extends AsyncTask<String, Integer, Integer> {
         @Override
-        protected Integer doInBackground(Spaceship... parameter) {
+        protected Integer doInBackground(String... parameter) {
             while(!spaceship.isReady()) {
                 int myProgress = spaceship.getTimeLeft();
                 spaceship.tick();
@@ -206,16 +209,60 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onProgressUpdate(Integer... progress) {
+            final String text;
             if (spaceship.getTimeLeft() != 0) {
-                spaceshipText.setText(Integer.toString(progress[0]) + " (" + spaceship.getTargetPlanet().getName() + ")");
+                text = Integer.toString(progress[0]) +
+                                        " (" + spaceship.getTargetPlanet().getName() + ")";
             } else{
-                spaceshipText.setText("Ready");
+                text ="Ready";
             }
+            spaceshipText.setText(text);
         }
     }
 
-    private void createBuilding(){
+    private class ProduceAsyncTask extends AsyncTask<String, Integer, Integer> {
+        @Override
+        protected Integer doInBackground(String... parameter) {
+            while(TIME > 0) {
+                int myProgress = 1;
+                // for planet in planets
+                for (Planet planet : empire.getPlanets().values()){
+                    // for building in planet
+                    for (Building b : planet.getBuildings()){
+                        // produce
+                        b.tick();
+                        // add to Empire and clear storage
+                        Resource tempRes = b.getTempStorage();
+                        empire.getResources().get(tempRes.getType()).increase(tempRes.getAmount());
+                        tempRes.decrease(tempRes.getAmount());
+                        System.out.println(empire.getResources().get(tempRes.getType()).getAmount());
+                    }
+                }
+                try {
+                    Thread.sleep(1000);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+                publishProgress(myProgress);
+                TIME--;
+            }
+            return 0;
+        }
 
+        @Override
+        protected void onProgressUpdate(Integer... progress) {
+
+        }
+    }
+
+    // TODO: check for balance
+    private void createBuilding(String type){
+        String name = this.planetName.getText().toString();
+        Planet planet = empire.getPlanets().get(name);
+        Building building = new Building(planet, type);
+        building.produce();
+        planet.addBuilding(building);
     }
 
     private void hidePlanetInfo(){
