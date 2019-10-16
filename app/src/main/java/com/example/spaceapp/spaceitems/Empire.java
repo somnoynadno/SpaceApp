@@ -28,6 +28,10 @@ public class Empire {
         return this.name;
     }
 
+    public void addPlanet(Planet planet){
+        this.planets.add(planet);
+    }
+
     public List<Planet> getPlanets(){
         return this.planets;
     }

@@ -37,7 +37,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="20dp"
-        android:text="Num of wood"
+        android:text="Wood"
         app:layout_constraintBottom_toTopOf="@+id/stoneView"
         app:layout_constraintEnd_toStartOf="@+id/woodButton"
         app:layout_constraintStart_toEndOf="@+id/woodView" />
@@ -61,7 +61,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="20dp"
-        android:text="Num of stone"
+        android:text="Stone"
         app:layout_constraintBottom_toBottomOf="@+id/stoneView"
         app:layout_constraintEnd_toStartOf="@+id/stoneButton"
         app:layout_constraintStart_toEndOf="@+id/stoneView" />
@@ -85,7 +85,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="24dp"
-        android:text="Num of water"
+        android:text="Water"
         app:layout_constraintBottom_toBottomOf="@+id/waterView"
         app:layout_constraintEnd_toStartOf="@+id/waterButton"
         app:layout_constraintStart_toEndOf="@+id/waterView" />
@@ -94,10 +94,10 @@
         android:id="@+id/woodButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="32dp"
         android:text="add builing"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/woodBuildingsNum"
         app:layout_constraintTop_toBottomOf="@+id/planetName" />
 
     <Button
@@ -105,16 +105,51 @@
         android:layout_width="117dp"
         android:layout_height="51dp"
         android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
         android:text="add building"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/stoneBuildingsNum"
         app:layout_constraintTop_toBottomOf="@+id/woodButton" />
 
     <Button
         android:id="@+id/waterButton"
         android:layout_width="117dp"
         android:layout_height="50dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
         android:text="add building"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/waterBuildingsNum"
         app:layout_constraintTop_toBottomOf="@+id/stoneButton" />
+
+    <TextView
+        android:id="@+id/woodBuildingsNum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="28dp"
+        android:text="0"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/planetName" />
+
+    <TextView
+        android:id="@+id/stoneBuildingsNum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="28dp"
+        android:text="0"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/woodBuildingsNum" />
+
+    <TextView
+        android:id="@+id/waterBuildingsNum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="28dp"
+        android:text="0"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/stoneBuildingsNum" />
 </androidx.constraintlayout.widget.ConstraintLayout>

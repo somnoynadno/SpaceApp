@@ -34,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView woodText;
     private TextView waterText;
     private TextView stoneText;
+    private TextView woodBuildingsNum;
+    private TextView waterBuildingsNum;
+    private TextView stoneBuildingsNum;
     private Button addWoodBuiling;
     private Button addStoneBuiling;
     private Button addWaterBuiling;
@@ -92,6 +95,9 @@ public class MainActivity extends AppCompatActivity {
         this.woodText = findViewById(R.id.woodText);
         this.waterText = findViewById(R.id.waterText);
         this.stoneText = findViewById(R.id.stoneText);
+        this.woodBuildingsNum = findViewById(R.id.woodBuildingsNum);
+        this.waterBuildingsNum = findViewById(R.id.waterBuildingsNum);
+        this.stoneBuildingsNum = findViewById(R.id.stoneBuildingsNum);
 
         this.addStoneBuiling = findViewById(R.id.stoneButton);
         this.addWaterBuiling = findViewById(R.id.waterButton);
@@ -109,6 +115,8 @@ public class MainActivity extends AppCompatActivity {
         this.marsView = findViewById(R.id.imageMars);
         this.neptuneView = findViewById(R.id.imageNeptune);
 
+        hidePlanetInfo();
+
         this.earthView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,6 +133,26 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 setPlanetInfo(Neptune);
+            }
+        });
+
+        // TODO: add building type
+        this.addStoneBuiling.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createBuilding();
+            }
+        });
+        this.addWaterBuiling.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createBuilding();
+            }
+        });
+        this.addWoodBuiling.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createBuilding();
             }
         });
     }
@@ -152,13 +180,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (!planet.isCaptured()){
-            this.addStoneBuiling.setVisibility(GONE);
-            this.addWaterBuiling.setVisibility(GONE);
-            this.addWoodBuiling.setVisibility(GONE);
+            this.hidePlanetInfo();
         } else {
-            this.addStoneBuiling.setVisibility(VISIBLE);
-            this.addWaterBuiling.setVisibility(VISIBLE);
-            this.addWoodBuiling.setVisibility(VISIBLE);
+            this.showPlanetInfo();
         }
     }
 
@@ -176,6 +200,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 publishProgress(myProgress);
             }
+            empire.addPlanet(spaceship.getTargetPlanet());
             return 0;
         }
 
@@ -187,6 +212,30 @@ public class MainActivity extends AppCompatActivity {
                 spaceshipText.setText("Ready");
             }
         }
+    }
+
+    private void createBuilding(){
+
+    }
+
+    private void hidePlanetInfo(){
+        this.addStoneBuiling.setVisibility(GONE);
+        this.addWaterBuiling.setVisibility(GONE);
+        this.addWoodBuiling.setVisibility(GONE);
+
+        this.stoneBuildingsNum.setVisibility(GONE);
+        this.waterBuildingsNum.setVisibility(GONE);
+        this.woodBuildingsNum.setVisibility(GONE);
+    }
+
+    private void showPlanetInfo(){
+        this.addStoneBuiling.setVisibility(VISIBLE);
+        this.addWaterBuiling.setVisibility(VISIBLE);
+        this.addWoodBuiling.setVisibility(VISIBLE);
+
+        this.stoneBuildingsNum.setVisibility(VISIBLE);
+        this.waterBuildingsNum.setVisibility(VISIBLE);
+        this.woodBuildingsNum.setVisibility(VISIBLE);
     }
 
     @Override
