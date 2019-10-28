@@ -1,11 +1,13 @@
 package com.example.spaceapp;
 
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.example.spaceapp.spaceitems.Building;
 import com.example.spaceapp.spaceitems.Empire;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -22,18 +24,20 @@ import android.widget.Toast;
 import com.example.spaceapp.spaceitems.Planet;
 import com.example.spaceapp.spaceitems.Resource;
 import com.example.spaceapp.spaceitems.Spaceship;
+import com.example.spaceapp.spaceitems.utils.IdGenerator;
 
 import java.util.Map;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+// TODO: add randomness
+// TODO: check constraints
 public class MainActivity extends AppCompatActivity {
     private Empire empire;
     private Map<String, Resource> resources;
     private ProduceAsyncTask produceAsync;
     private Planet selectedPlanet;
-    private int TIME = 100000;
     // planet info
     private TextView planetName;
     private TextView woodText;
@@ -66,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        IdGenerator planetIdGenerator = new IdGenerator();
+
         this.empire = new Empire("Awesome Empire");
 
         this.resources = this.empire.getResources();
@@ -73,9 +79,9 @@ public class MainActivity extends AppCompatActivity {
         Resource empireStone = this.resources.get("Stone");
         Resource empireWater = this.resources.get("Water");
 
-        final Planet Earth = new Planet("Earth");
-        final Planet Mars = new Planet("Mars");
-        final Planet Neptune = new Planet("Neptune");
+        final Planet Earth = new Planet("Earth", planetIdGenerator.giveNextID());
+        final Planet Mars = new Planet("Mars", planetIdGenerator.giveNextID());
+        final Planet Neptune = new Planet("Neptune", planetIdGenerator.giveNextID());
         this.selectedPlanet = Earth;
 
         LayoutInflater inflater = getLayoutInflater();
@@ -144,18 +150,18 @@ public class MainActivity extends AppCompatActivity {
 
         this.addStoneBuiling.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { upgradeBuilding("Stone");
+            public void onClick(View v) { alertBuildingDialog("Stone");
             }
         });
         this.addWaterBuiling.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { upgradeBuilding("Water");
+            public void onClick(View v) { alertBuildingDialog("Water");
             }
         });
         this.addWoodBuiling.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                upgradeBuilding("Wood");
+                alertBuildingDialog("Wood");
             }
         });
 
@@ -175,40 +181,7 @@ public class MainActivity extends AppCompatActivity {
             this.captureButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    spaceship.capture(planet);
-
-                    captureButton.setVisibility(GONE);
-
-                    Thread spaceshipThread = new Thread() {
-                        public void run() {
-                            while(!spaceship.isReady()) {
-                                int myProgress = spaceship.getTimeLeft();
-                                spaceship.tick();
-                                try {
-                                    Thread.sleep(1000);
-                                }
-                                catch (Exception e){
-                                    e.printStackTrace();
-                                }
-                                final String text;
-                                if (spaceship.getTimeLeft() != 0) {
-                                    text = Integer.toString(myProgress) +
-                                            " (" + spaceship.getTargetPlanet().getName() + ")";
-                                } else{
-                                    text ="Ready";
-                                }
-                                MainActivity.this.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        spaceshipText.setText(text);
-                                    }
-                                });
-                            }
-                            empire.addPlanet(spaceship.getTargetPlanet());
-                        }
-                    };
-
-                    spaceshipThread.start();
+                    alertCaptureDialog();
                 }
             });
         } else {
@@ -225,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
     private class ProduceAsyncTask extends AsyncTask<String, Integer, Integer> {
         @Override
         protected Integer doInBackground(String... parameter) {
-            while(TIME > 0) {
+            while(true) {
                 int myProgress = 1;
                 // for planet in planets
                 for (Planet planet : empire.getPlanets().values()){
@@ -246,9 +219,7 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 publishProgress(myProgress);
-                TIME--;
             }
-            return 0;
         }
 
         @Override
@@ -265,6 +236,98 @@ public class MainActivity extends AppCompatActivity {
             woodBuildingsNum.setText(String.valueOf(selectedPlanet.getBuildings().get("Wood").getLevel()));
             stoneBuildingsNum.setText(String.valueOf(selectedPlanet.getBuildings().get("Stone").getLevel()));
         }
+    }
+
+    private void capturePlanet(Planet planet){
+        spaceship.capture(planet);
+
+        captureButton.setVisibility(GONE);
+
+        Thread spaceshipThread = new Thread() {
+            public void run() {
+                while(!spaceship.isReady()) {
+                    int myProgress = spaceship.getTimeLeft();
+                    spaceship.tick();
+                    try {
+                        Thread.sleep(1000);
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    final String text;
+                    if (spaceship.getTimeLeft() != 0) {
+                        text = Integer.toString(myProgress) +
+                                " (" + spaceship.getTargetPlanet().getName() + ")";
+                    } else{
+                        text ="Ready";
+                    }
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            spaceshipText.setText(text);
+                        }
+                    });
+                }
+                empire.addPlanet(spaceship.getTargetPlanet());
+            }
+        };
+
+        spaceshipThread.start();
+    }
+
+    private void alertCaptureDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Capture?")
+                .setMessage("You wanna fly to " + selectedPlanet.getName() +
+                        " for " + selectedPlanet.getDistance() + " seconds. Continue?")
+                .setCancelable(false)
+                .setPositiveButton("Yos",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                                System.out.println("1");
+                                capturePlanet(selectedPlanet);
+                            }
+                        })
+                .setNegativeButton("No, go back",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                                System.out.println("0");
+                            }
+                        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private void alertBuildingDialog(final String type){
+        Building selectedBuilding = this.selectedPlanet.getBuildings().get(type);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Upgrade?")
+                .setMessage(selectedBuilding.getType() + " building upgrade will cost " +
+                        selectedBuilding.getCost() + " of " +
+                        selectedBuilding.getType().toLowerCase() + ". Continue?")
+                .setCancelable(false)
+                .setPositiveButton("Yep",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                                System.out.println("1");
+                                upgradeBuilding(type);
+                            }
+                        })
+                .setNegativeButton("Nope",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                                System.out.println("0");
+                            }
+                        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     private void upgradeBuilding(String type){

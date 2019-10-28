@@ -1,19 +1,20 @@
 package com.example.spaceapp.spaceitems;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Planet {
     private String name;
+    private int id;
     private int distance;
     private Map<String, Resource> resourcesMap;
     private Map<String, Building> buildings;
     private boolean captured;
 
-    public Planet(String planetName){
+    public Planet(String planetName, int id){
         this.name = planetName;
+        this.id = id;
+
         this.distance = 4;
         this.captured = false;
 
@@ -38,6 +39,10 @@ public class Planet {
 
     public String getName(){
         return this.name;
+    }
+
+    public int getId() {
+        return this.id;
     }
 
     public Map<String, Resource> getResources(){
