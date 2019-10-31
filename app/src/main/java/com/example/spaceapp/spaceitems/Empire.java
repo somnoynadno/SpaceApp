@@ -1,5 +1,7 @@
 package com.example.spaceapp.spaceitems;
 
+import com.example.spaceapp.spaceitems.types.ResourceTypes;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,14 +14,14 @@ public class Empire {
         this.name = empireName;
         this.planets = new HashMap();
 
-        Resource wood = new Resource("Wood", 200);
-        Resource stone = new Resource("Stone", 200);
-        Resource water = new Resource("Water", 200);
+        Resource wood = new Resource(ResourceTypes.WOOD.getValue(), 200);
+        Resource stone = new Resource(ResourceTypes.STONE.getValue(), 200);
+        Resource water = new Resource(ResourceTypes.WATER.getValue(), 200);
 
         this.resourcesMap = new HashMap();
-        this.resourcesMap.put("Wood", wood);
-        this.resourcesMap.put("Stone", stone);
-        this.resourcesMap.put("Water", water);
+        this.resourcesMap.put(ResourceTypes.WOOD.getValue(), wood);
+        this.resourcesMap.put(ResourceTypes.STONE.getValue(), stone);
+        this.resourcesMap.put(ResourceTypes.WATER.getValue(), water);
     }
 
     public String getName(){

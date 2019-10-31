@@ -24,6 +24,8 @@ import android.widget.Toast;
 import com.example.spaceapp.spaceitems.Planet;
 import com.example.spaceapp.spaceitems.Resource;
 import com.example.spaceapp.spaceitems.Spaceship;
+import com.example.spaceapp.spaceitems.types.PlanetTypes;
+import com.example.spaceapp.spaceitems.types.ResourceTypes;
 import com.example.spaceapp.spaceitems.utils.IdGenerator;
 
 import java.util.Map;
@@ -46,9 +48,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView woodBuildingsNum;
     private TextView waterBuildingsNum;
     private TextView stoneBuildingsNum;
-    private Button addWoodBuiling;
-    private Button addStoneBuiling;
-    private Button addWaterBuiling;
+    private Button addWoodBuilding;
+    private Button addStoneBuilding;
+    private Button addWaterBuilding;
     // empire info
     private TextView empireName;
     private TextView empireWoodText;
@@ -75,13 +77,13 @@ public class MainActivity extends AppCompatActivity {
         this.empire = new Empire("Awesome Empire");
 
         this.resources = this.empire.getResources();
-        Resource empireWood = this.resources.get("Wood");
-        Resource empireStone = this.resources.get("Stone");
-        Resource empireWater = this.resources.get("Water");
+        Resource empireWood = this.resources.get(ResourceTypes.WOOD.getValue());
+        Resource empireStone = this.resources.get(ResourceTypes.STONE.getValue());
+        Resource empireWater = this.resources.get(ResourceTypes.WATER.getValue());
 
-        final Planet Earth = new Planet("Earth", planetIdGenerator.giveNextID());
-        final Planet Mars = new Planet("Mars", planetIdGenerator.giveNextID());
-        final Planet Neptune = new Planet("Neptune", planetIdGenerator.giveNextID());
+        final Planet Earth = new Planet(PlanetTypes.EARTH.getValue(), planetIdGenerator.giveNextID());
+        final Planet Mars = new Planet(PlanetTypes.MARS.getValue(), planetIdGenerator.giveNextID());
+        final Planet Neptune = new Planet(PlanetTypes.NEPTUNE.getValue(), planetIdGenerator.giveNextID());
         this.selectedPlanet = Earth;
 
         LayoutInflater inflater = getLayoutInflater();
@@ -111,9 +113,9 @@ public class MainActivity extends AppCompatActivity {
         this.waterBuildingsNum = findViewById(R.id.waterBuildingsNum);
         this.stoneBuildingsNum = findViewById(R.id.stoneBuildingsNum);
 
-        this.addStoneBuiling = findViewById(R.id.stoneButton);
-        this.addWaterBuiling = findViewById(R.id.waterButton);
-        this.addWoodBuiling = findViewById(R.id.woodButton);
+        this.addStoneBuilding = findViewById(R.id.stoneButton);
+        this.addWaterBuilding = findViewById(R.id.waterButton);
+        this.addWoodBuilding = findViewById(R.id.woodButton);
 
         this.empireWoodText = findViewById(R.id.empireWoodText);
         this.empireStoneText = findViewById(R.id.empireStoneText);
@@ -148,20 +150,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        this.addStoneBuiling.setOnClickListener(new View.OnClickListener() {
+        this.addStoneBuilding.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { alertBuildingDialog("Stone");
+            public void onClick(View v) { alertBuildingDialog(ResourceTypes.STONE.getValue());
             }
         });
-        this.addWaterBuiling.setOnClickListener(new View.OnClickListener() {
+        this.addWaterBuilding.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { alertBuildingDialog("Water");
+            public void onClick(View v) { alertBuildingDialog(ResourceTypes.WATER.getValue());
             }
         });
-        this.addWoodBuiling.setOnClickListener(new View.OnClickListener() {
+        this.addWoodBuilding.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alertBuildingDialog("Wood");
+                alertBuildingDialog(ResourceTypes.WOOD.getValue());
             }
         });
 
@@ -172,9 +174,9 @@ public class MainActivity extends AppCompatActivity {
     public void setPlanetInfo(final Planet planet){
         this.planetName.setText(planet.getName());
         this.selectedPlanet = planet;
-        this.woodText.setText(Integer.toString(planet.getResources().get("Wood").getAmount()));
-        this.stoneText.setText(Integer.toString(planet.getResources().get("Stone").getAmount()));
-        this.waterText.setText(Integer.toString(planet.getResources().get("Water").getAmount()));
+        this.woodText.setText(Integer.toString(planet.getResources().get(ResourceTypes.WOOD.getValue()).getAmount()));
+        this.stoneText.setText(Integer.toString(planet.getResources().get(ResourceTypes.STONE.getValue()).getAmount()));
+        this.waterText.setText(Integer.toString(planet.getResources().get(ResourceTypes.WATER.getValue()).getAmount()));
 
         if (!planet.isCaptured() && this.spaceship.isReady()){
             this.captureButton.setVisibility(VISIBLE);
@@ -224,17 +226,17 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onProgressUpdate(Integer... progress) {
-            empireStoneText.setText(String.valueOf(empire.getResources().get("Stone").getAmount()));
-            empireWaterText.setText(String.valueOf(empire.getResources().get("Water").getAmount()));
-            empireWoodText.setText(String.valueOf(empire.getResources().get("Wood").getAmount()));
+            empireStoneText.setText(String.valueOf(empire.getResources().get(ResourceTypes.STONE.getValue()).getAmount()));
+            empireWaterText.setText(String.valueOf(empire.getResources().get(ResourceTypes.WATER.getValue()).getAmount()));
+            empireWoodText.setText(String.valueOf(empire.getResources().get(ResourceTypes.WOOD.getValue()).getAmount()));
 
-            waterText.setText(String.valueOf(selectedPlanet.getResources().get("Water").getAmount()));
-            woodText.setText(String.valueOf(selectedPlanet.getResources().get("Wood").getAmount()));
-            stoneText.setText(String.valueOf(selectedPlanet.getResources().get("Stone").getAmount()));
+            waterText.setText(String.valueOf(selectedPlanet.getResources().get(ResourceTypes.WATER.getValue()).getAmount()));
+            woodText.setText(String.valueOf(selectedPlanet.getResources().get(ResourceTypes.WOOD.getValue()).getAmount()));
+            stoneText.setText(String.valueOf(selectedPlanet.getResources().get(ResourceTypes.STONE.getValue()).getAmount()));
 
-            waterBuildingsNum.setText(String.valueOf(selectedPlanet.getBuildings().get("Water").getLevel()));
-            woodBuildingsNum.setText(String.valueOf(selectedPlanet.getBuildings().get("Wood").getLevel()));
-            stoneBuildingsNum.setText(String.valueOf(selectedPlanet.getBuildings().get("Stone").getLevel()));
+            waterBuildingsNum.setText(String.valueOf(selectedPlanet.getBuildings().get(ResourceTypes.WATER.getValue()).getLevel()));
+            woodBuildingsNum.setText(String.valueOf(selectedPlanet.getBuildings().get(ResourceTypes.WOOD.getValue()).getLevel()));
+            stoneBuildingsNum.setText(String.valueOf(selectedPlanet.getBuildings().get(ResourceTypes.STONE.getValue()).getLevel()));
         }
     }
 
@@ -346,9 +348,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void hidePlanetInfo(){
-        this.addStoneBuiling.setVisibility(GONE);
-        this.addWaterBuiling.setVisibility(GONE);
-        this.addWoodBuiling.setVisibility(GONE);
+        this.addStoneBuilding.setVisibility(GONE);
+        this.addWaterBuilding.setVisibility(GONE);
+        this.addWoodBuilding.setVisibility(GONE);
 
         this.stoneBuildingsNum.setVisibility(GONE);
         this.waterBuildingsNum.setVisibility(GONE);
@@ -356,9 +358,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showPlanetInfo(){
-        this.addStoneBuiling.setVisibility(VISIBLE);
-        this.addWaterBuiling.setVisibility(VISIBLE);
-        this.addWoodBuiling.setVisibility(VISIBLE);
+        this.addStoneBuilding.setVisibility(VISIBLE);
+        this.addWaterBuilding.setVisibility(VISIBLE);
+        this.addWoodBuilding.setVisibility(VISIBLE);
 
         this.stoneBuildingsNum.setVisibility(VISIBLE);
         this.waterBuildingsNum.setVisibility(VISIBLE);
