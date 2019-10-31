@@ -4,6 +4,7 @@ import com.example.spaceapp.spaceitems.types.ResourceTypes;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Planet {
     private String name;
@@ -12,17 +13,25 @@ public class Planet {
     private Map<String, Resource> resourcesMap;
     private Map<String, Building> buildings;
     private boolean captured;
+    private final int minDistance = 5;
+    private final int maxDistance = 32;
+    private final int minRange = 800;
+    private final int maxRange = 1200;
 
     public Planet(String planetName, int id){
         this.name = planetName;
         this.id = id;
 
-        this.distance = 4;
+        this.distance = ThreadLocalRandom.current().nextInt(minDistance, maxDistance + 1);
         this.captured = false;
 
-        Resource wood = new Resource(ResourceTypes.WOOD.getValue(), 1000);
-        Resource stone = new Resource(ResourceTypes.STONE.getValue(), 1000);
-        Resource water = new Resource(ResourceTypes.WATER.getValue(), 1000);
+        // generate random amount by default
+        Resource wood = new Resource(ResourceTypes.WOOD.getValue(),
+                ThreadLocalRandom.current().nextInt(minRange, maxRange + 1));
+        Resource stone = new Resource(ResourceTypes.STONE.getValue(),
+                ThreadLocalRandom.current().nextInt(minRange, maxRange + 1));
+        Resource water = new Resource(ResourceTypes.WATER.getValue(),
+                ThreadLocalRandom.current().nextInt(minRange, maxRange + 1));
 
         Building woodBuilding = new Building(this, ResourceTypes.WOOD.getValue());
         Building waterBuilding = new Building(this, ResourceTypes.WATER.getValue());

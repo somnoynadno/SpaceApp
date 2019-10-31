@@ -33,8 +33,7 @@ import java.util.Map;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-// TODO: add randomness
-// TODO: check constraints
+
 public class MainActivity extends AppCompatActivity {
     private Empire empire;
     private Map<String, Resource> resources;

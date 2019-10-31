@@ -11,7 +11,7 @@ public class Building {
     public Building(Planet myPlanet, String buildingType){
         this.planet = myPlanet;
         this.type = buildingType;
-        this.cost = 200;
+        this.cost = 200; // by default
         this.level = 0;
         this.producingStatus = false;
         this.tempStorage = new Resource(type, 0);
@@ -37,9 +37,14 @@ public class Building {
     public void tick(){
         if (this.producingStatus){
             int amount = this.level*10;
-            planet.decreaseResource(this.type, amount);
-            this.tempStorage.increase(amount);
-            if (planet.getResources().get(type).getAmount() <= 0){
+            int resAmountInPlanet = planet.getResources().get(this.type).getAmount();
+            if (resAmountInPlanet - amount > 0) {
+                planet.decreaseResource(this.type, amount);
+                this.tempStorage.increase(amount);
+            }
+            else{
+                planet.decreaseResource(this.type, resAmountInPlanet);
+                this.tempStorage.increase(resAmountInPlanet);
                 this.producingStatus = false;
             }
         }
