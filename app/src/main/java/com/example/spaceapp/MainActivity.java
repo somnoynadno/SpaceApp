@@ -34,9 +34,11 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 
+// TODO: fix enums
 public class MainActivity extends AppCompatActivity {
     private Empire empire;
     private Map<String, Resource> resources;
+    private Map<Integer, Planet> planets;
     private ProduceAsyncTask produceAsync;
     private Planet selectedPlanet;
     // planet info
@@ -84,6 +86,10 @@ public class MainActivity extends AppCompatActivity {
         final Planet Mars = new Planet(PlanetTypes.MARS.getValue(), planetIdGenerator.giveNextID());
         final Planet Neptune = new Planet(PlanetTypes.NEPTUNE.getValue(), planetIdGenerator.giveNextID());
         this.selectedPlanet = Earth;
+
+        this.planets.put(Earth.getId(), Earth);
+        this.planets.put(Mars.getId(), Mars);
+        this.planets.put(Neptune.getId(), Neptune);
 
         LayoutInflater inflater = getLayoutInflater();
         LinearLayout l1 = findViewById(R.id.planetInfo);
