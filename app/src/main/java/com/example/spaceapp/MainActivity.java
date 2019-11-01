@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private Map<Integer, Planet> planets;
     private ProduceAsyncTask produceAsync;
     private Planet selectedPlanet;
+    private Map<ResourceTypes, String> resourceNames;
+    private Map<PlanetTypes, String> planetNames;
     // planet info
     private TextView planetName;
     private TextView woodText;
@@ -96,6 +98,16 @@ public class MainActivity extends AppCompatActivity {
         this.planets.put(Earth.getId(), Earth);
         this.planets.put(Mars.getId(), Mars);
         this.planets.put(Neptune.getId(), Neptune);
+
+        this.planetNames = new HashMap();
+        this.planetNames.put(PlanetTypes.EARTH, "Earth");
+        this.planetNames.put(PlanetTypes.MARS, "Mars");
+        this.planetNames.put(PlanetTypes.NEPTUNE, "Neptune");
+
+        this.resourceNames = new HashMap();
+        this.resourceNames.put(ResourceTypes.WOOD, "Wood");
+        this.resourceNames.put(ResourceTypes.STONE, "Stone");
+        this.resourceNames.put(ResourceTypes.WATER, "Water");
 
         LayoutInflater inflater = getLayoutInflater();
         LinearLayout l1 = findViewById(R.id.planetInfo);
@@ -194,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setPlanetInfo(final Planet planet){
-        this.planetName.setText(String.valueOf(planet.getName()));
+        this.planetName.setText(String.valueOf(planetNames.get(planet.getName())));
         this.selectedPlanet = planet;
         this.woodText.setText(Integer.toString(planet.getResources().get(ResourceTypes.WOOD).getAmount()));
         this.stoneText.setText(Integer.toString(planet.getResources().get(ResourceTypes.STONE).getAmount()));
@@ -295,8 +307,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                     final String text;
                     if (spaceship.getTimeLeft() != 0) {
-                        text = Integer.toString(myProgress) +
-                                " (" + spaceship.getTargetPlanet().getName() + ")";
+                        text = Integer.toString(myProgress) + " (" +
+                                planetNames.get(spaceship.getTargetPlanet().getName()) + ")";
                     } else{
                         text ="Ready";
                     }
@@ -317,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
     private void alertCaptureDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Capture?")
-                .setMessage("You wanna fly to " + selectedPlanet.getName() +
+                .setMessage("You wanna fly to " + planetNames.get(selectedPlanet.getName()) +
                         " for " + selectedPlanet.getDistance() + " seconds. Continue?")
                 .setCancelable(false)
                 .setPositiveButton("Yos",
@@ -345,9 +357,9 @@ public class MainActivity extends AppCompatActivity {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Upgrade?")
-                .setMessage(selectedBuilding.getType() + " building upgrade will cost " +
+                .setMessage(resourceNames.get(selectedBuilding.getType()) + " building upgrade will cost " +
                         selectedBuilding.getCost() + " of " +
-                        selectedBuilding.getType() + ". Continue?")
+                        resourceNames.get(selectedBuilding.getType()) + ". Continue?")
                 .setCancelable(false)
                 .setPositiveButton("Yep",
                         new DialogInterface.OnClickListener() {
@@ -375,7 +387,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Boost mood?")
                 .setMessage("Your citizens want " + res.getAmount() +
-                        " of " + res.getType() + ". Continue?")
+                        " of " + resourceNames.get(res.getType()) + ". Continue?")
                 .setCancelable(false)
                 .setPositiveButton("Yes",
                         new DialogInterface.OnClickListener() {
