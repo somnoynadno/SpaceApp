@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.example.spaceapp.spaceitems.Building;
+import com.example.spaceapp.spaceitems.Citizen;
 import com.example.spaceapp.spaceitems.Empire;
 
 import androidx.appcompat.app.AlertDialog;
@@ -28,6 +29,7 @@ import com.example.spaceapp.spaceitems.types.PlanetTypes;
 import com.example.spaceapp.spaceitems.types.ResourceTypes;
 import com.example.spaceapp.spaceitems.utils.IdGenerator;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static android.view.View.GONE;
@@ -65,6 +67,10 @@ public class MainActivity extends AppCompatActivity {
     private Button captureButton;
     private Spaceship spaceship;
     private TextView spaceshipText;
+    // citizen view
+    private TextView citizenNumText;
+    private Button bustMoodButton;
+    private ImageView moodView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
         final Planet Neptune = new Planet(PlanetTypes.NEPTUNE.getValue(), planetIdGenerator.giveNextID());
         this.selectedPlanet = Earth;
 
+        this.planets = new HashMap();
         this.planets.put(Earth.getId(), Earth);
         this.planets.put(Mars.getId(), Mars);
         this.planets.put(Neptune.getId(), Neptune);
@@ -100,6 +107,17 @@ public class MainActivity extends AppCompatActivity {
 
         l1.addView(planetView);
         l2.addView(empireView);
+
+        this.moodView = findViewById(R.id.moodView);
+        this.bustMoodButton = findViewById(R.id.buttonBustMood);
+        this.citizenNumText = findViewById(R.id.citizenNum);
+
+        this.bustMoodButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertBoostMoodDialog();
+            }
+        });
 
         this.spaceship = new Spaceship();
         this.spaceshipText = findViewById(R.id.spaceshipText);
@@ -218,6 +236,8 @@ public class MainActivity extends AppCompatActivity {
                         empire.getResources().get(tempRes.getType()).increase(tempRes.getAmount());
                         tempRes.decrease(tempRes.getAmount());
                     }
+
+                    planet.getCitizens().tick();
                 }
                 try {
                     Thread.sleep(2000);
@@ -242,6 +262,19 @@ public class MainActivity extends AppCompatActivity {
             waterBuildingsNum.setText(String.valueOf(selectedPlanet.getBuildings().get(ResourceTypes.WATER.getValue()).getLevel()));
             woodBuildingsNum.setText(String.valueOf(selectedPlanet.getBuildings().get(ResourceTypes.WOOD.getValue()).getLevel()));
             stoneBuildingsNum.setText(String.valueOf(selectedPlanet.getBuildings().get(ResourceTypes.STONE.getValue()).getLevel()));
+
+            Citizen citizen;
+            citizen = selectedPlanet.getCitizens();
+
+            if (citizen != null) {
+                citizenNumText.setText(String.valueOf(citizen.getAmount()));
+                double mood = citizen.getMood();
+                if (mood < 30) {
+                    moodView.setImageResource(R.drawable.sad);
+                } else if (mood > 70) {
+                    moodView.setImageResource(R.drawable.happy);
+                } else moodView.setImageResource(R.drawable.normal);
+            }
         }
     }
 
@@ -337,6 +370,34 @@ public class MainActivity extends AppCompatActivity {
         alert.show();
     }
 
+    private void alertBoostMoodDialog(){
+        final Citizen citizen = selectedPlanet.getCitizens();
+        final Resource res = citizen.getWantedResource();
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Boost mood?")
+                .setMessage("Your citizens want " + res.getAmount() +
+                        " of " + res.getType().toLowerCase() + ". Continue?")
+                .setCancelable(false)
+                .setPositiveButton("Yes",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                                System.out.println("1");
+                                boostCitizensMood(citizen, res);
+                            }
+                        })
+                .setNegativeButton("Not today",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                                System.out.println("0");
+                            }
+                        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
     private void upgradeBuilding(String type){
         Building selectedBuilding = this.selectedPlanet.getBuildings().get(type);
         int cost = selectedBuilding.getCost();
@@ -352,6 +413,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void boostCitizensMood(Citizen citizen, Resource res){
+        Resource myRes = empire.getResources().get(res.getType());
+        if (myRes.getAmount() < res.getAmount()){
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    "Недостаточно ресурсов!", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+        else{
+            myRes.decrease(res.getAmount());
+            citizen.boostMood();
+        }
+    }
+
     private void hidePlanetInfo(){
         this.addStoneBuilding.setVisibility(GONE);
         this.addWaterBuilding.setVisibility(GONE);
@@ -360,6 +434,10 @@ public class MainActivity extends AppCompatActivity {
         this.stoneBuildingsNum.setVisibility(GONE);
         this.waterBuildingsNum.setVisibility(GONE);
         this.woodBuildingsNum.setVisibility(GONE);
+
+        this.citizenNumText.setVisibility(GONE);
+        this.moodView.setVisibility(GONE);
+        this.bustMoodButton.setVisibility(GONE);
     }
 
     private void showPlanetInfo(){
@@ -370,6 +448,10 @@ public class MainActivity extends AppCompatActivity {
         this.stoneBuildingsNum.setVisibility(VISIBLE);
         this.waterBuildingsNum.setVisibility(VISIBLE);
         this.woodBuildingsNum.setVisibility(VISIBLE);
+
+        this.citizenNumText.setVisibility(VISIBLE);
+        this.moodView.setVisibility(VISIBLE);
+        this.bustMoodButton.setVisibility(VISIBLE);
     }
 
     @Override

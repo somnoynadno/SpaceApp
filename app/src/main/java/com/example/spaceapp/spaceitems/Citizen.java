@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Citizen {
     private int amount;
-    private int mood; // from 0 to 100
+    private double mood; // from 0 to 100
     private double reproductionRate;
     private Planet planet;
     private Resource wantedResource;
@@ -37,7 +37,7 @@ public class Citizen {
                 ThreadLocalRandom.current().nextInt(amountMinRange, amountMaxRange + 1));
     }
 
-    public int getMood(){
+    public double getMood(){
         return this.mood;
     }
 
@@ -50,9 +50,10 @@ public class Citizen {
     }
 
     public void tick(){
-        this.mood -= 1;
+        this.mood -= 0.6;
         this.reproductionRate = (this.mood/1000)*4;
         this.reproduceCitizen();
+        System.out.println(planet.getName() + " " + this.amount + " " + this.mood);
     }
 
     public void boostMood(){

@@ -17,6 +17,7 @@ public class Planet {
     private final int maxDistance = 32;
     private final int minRange = 800;
     private final int maxRange = 1200;
+    private Citizen citizens;
 
     public Planet(String planetName, int id){
         this.name = planetName;
@@ -70,6 +71,7 @@ public class Planet {
 
     public void capture(){
         this.captured = true;
+        this.citizens = new Citizen(this);
     }
 
     public boolean isCaptured(){
@@ -78,6 +80,10 @@ public class Planet {
 
     public void decreaseResource(String type, int amount){
         this.resourcesMap.get(type).decrease(amount);
+    }
+
+    public Citizen getCitizens(){
+        return this.citizens;
     }
 
 }
