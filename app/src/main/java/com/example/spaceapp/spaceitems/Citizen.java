@@ -23,8 +23,8 @@ public class Citizen {
     private static final int SIZE = VALUES.size();
     private static final Random RANDOM = new Random();
 
-    private static String getRandomResource(){
-        return VALUES.get(RANDOM.nextInt(SIZE)).getValue();
+    private static ResourceTypes getRandomResource(){
+        return VALUES.get(RANDOM.nextInt(SIZE));
     }
 
     public Citizen(Planet planet){
@@ -53,7 +53,7 @@ public class Citizen {
         this.mood -= 0.6;
         this.reproductionRate = (this.mood/1000)*4;
         this.reproduceCitizen();
-        System.out.println(planet.getName() + " " + this.amount + " " + this.mood);
+//        System.out.println(planet.getName() + " " + this.amount + " " + this.mood);
     }
 
     public void boostMood(){

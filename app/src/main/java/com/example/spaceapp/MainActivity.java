@@ -36,10 +36,9 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 
-// TODO: fix enums
 public class MainActivity extends AppCompatActivity {
     private Empire empire;
-    private Map<String, Resource> resources;
+    private Map<ResourceTypes, Resource> resources;
     private Map<Integer, Planet> planets;
     private ProduceAsyncTask produceAsync;
     private Planet selectedPlanet;
@@ -84,13 +83,13 @@ public class MainActivity extends AppCompatActivity {
         this.empire = new Empire("Awesome Empire");
 
         this.resources = this.empire.getResources();
-        Resource empireWood = this.resources.get(ResourceTypes.WOOD.getValue());
-        Resource empireStone = this.resources.get(ResourceTypes.STONE.getValue());
-        Resource empireWater = this.resources.get(ResourceTypes.WATER.getValue());
+        Resource empireWood = this.resources.get(ResourceTypes.WOOD);
+        Resource empireStone = this.resources.get(ResourceTypes.STONE);
+        Resource empireWater = this.resources.get(ResourceTypes.WATER);
 
-        final Planet Earth = new Planet(PlanetTypes.EARTH.getValue(), planetIdGenerator.giveNextID());
-        final Planet Mars = new Planet(PlanetTypes.MARS.getValue(), planetIdGenerator.giveNextID());
-        final Planet Neptune = new Planet(PlanetTypes.NEPTUNE.getValue(), planetIdGenerator.giveNextID());
+        final Planet Earth = new Planet(PlanetTypes.EARTH, planetIdGenerator.giveNextID());
+        final Planet Mars = new Planet(PlanetTypes.MARS, planetIdGenerator.giveNextID());
+        final Planet Neptune = new Planet(PlanetTypes.NEPTUNE, planetIdGenerator.giveNextID());
         this.selectedPlanet = Earth;
 
         this.planets = new HashMap();
@@ -175,18 +174,18 @@ public class MainActivity extends AppCompatActivity {
 
         this.addStoneBuilding.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { alertBuildingDialog(ResourceTypes.STONE.getValue());
+            public void onClick(View v) { alertBuildingDialog(ResourceTypes.STONE);
             }
         });
         this.addWaterBuilding.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { alertBuildingDialog(ResourceTypes.WATER.getValue());
+            public void onClick(View v) { alertBuildingDialog(ResourceTypes.WATER);
             }
         });
         this.addWoodBuilding.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alertBuildingDialog(ResourceTypes.WOOD.getValue());
+                alertBuildingDialog(ResourceTypes.WOOD);
             }
         });
 
@@ -195,11 +194,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setPlanetInfo(final Planet planet){
-        this.planetName.setText(planet.getName());
+        this.planetName.setText(String.valueOf(planet.getName()));
         this.selectedPlanet = planet;
-        this.woodText.setText(Integer.toString(planet.getResources().get(ResourceTypes.WOOD.getValue()).getAmount()));
-        this.stoneText.setText(Integer.toString(planet.getResources().get(ResourceTypes.STONE.getValue()).getAmount()));
-        this.waterText.setText(Integer.toString(planet.getResources().get(ResourceTypes.WATER.getValue()).getAmount()));
+        this.woodText.setText(Integer.toString(planet.getResources().get(ResourceTypes.WOOD).getAmount()));
+        this.stoneText.setText(Integer.toString(planet.getResources().get(ResourceTypes.STONE).getAmount()));
+        this.waterText.setText(Integer.toString(planet.getResources().get(ResourceTypes.WATER).getAmount()));
 
         if (!planet.isCaptured() && this.spaceship.isReady()){
             this.captureButton.setVisibility(VISIBLE);
@@ -251,17 +250,17 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onProgressUpdate(Integer... progress) {
-            empireStoneText.setText(String.valueOf(empire.getResources().get(ResourceTypes.STONE.getValue()).getAmount()));
-            empireWaterText.setText(String.valueOf(empire.getResources().get(ResourceTypes.WATER.getValue()).getAmount()));
-            empireWoodText.setText(String.valueOf(empire.getResources().get(ResourceTypes.WOOD.getValue()).getAmount()));
+            empireStoneText.setText(String.valueOf(empire.getResources().get(ResourceTypes.STONE).getAmount()));
+            empireWaterText.setText(String.valueOf(empire.getResources().get(ResourceTypes.WATER).getAmount()));
+            empireWoodText.setText(String.valueOf(empire.getResources().get(ResourceTypes.WOOD).getAmount()));
 
-            waterText.setText(String.valueOf(selectedPlanet.getResources().get(ResourceTypes.WATER.getValue()).getAmount()));
-            woodText.setText(String.valueOf(selectedPlanet.getResources().get(ResourceTypes.WOOD.getValue()).getAmount()));
-            stoneText.setText(String.valueOf(selectedPlanet.getResources().get(ResourceTypes.STONE.getValue()).getAmount()));
+            waterText.setText(String.valueOf(selectedPlanet.getResources().get(ResourceTypes.WATER).getAmount()));
+            woodText.setText(String.valueOf(selectedPlanet.getResources().get(ResourceTypes.WOOD).getAmount()));
+            stoneText.setText(String.valueOf(selectedPlanet.getResources().get(ResourceTypes.STONE).getAmount()));
 
-            waterBuildingsNum.setText(String.valueOf(selectedPlanet.getBuildings().get(ResourceTypes.WATER.getValue()).getLevel()));
-            woodBuildingsNum.setText(String.valueOf(selectedPlanet.getBuildings().get(ResourceTypes.WOOD.getValue()).getLevel()));
-            stoneBuildingsNum.setText(String.valueOf(selectedPlanet.getBuildings().get(ResourceTypes.STONE.getValue()).getLevel()));
+            waterBuildingsNum.setText(String.valueOf(selectedPlanet.getBuildings().get(ResourceTypes.WATER).getLevel()));
+            woodBuildingsNum.setText(String.valueOf(selectedPlanet.getBuildings().get(ResourceTypes.WOOD).getLevel()));
+            stoneBuildingsNum.setText(String.valueOf(selectedPlanet.getBuildings().get(ResourceTypes.STONE).getLevel()));
 
             Citizen citizen;
             citizen = selectedPlanet.getCitizens();
@@ -341,14 +340,14 @@ public class MainActivity extends AppCompatActivity {
         alert.show();
     }
 
-    private void alertBuildingDialog(final String type){
+    private void alertBuildingDialog(final ResourceTypes type){
         Building selectedBuilding = this.selectedPlanet.getBuildings().get(type);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Upgrade?")
                 .setMessage(selectedBuilding.getType() + " building upgrade will cost " +
                         selectedBuilding.getCost() + " of " +
-                        selectedBuilding.getType().toLowerCase() + ". Continue?")
+                        selectedBuilding.getType() + ". Continue?")
                 .setCancelable(false)
                 .setPositiveButton("Yep",
                         new DialogInterface.OnClickListener() {
@@ -376,7 +375,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Boost mood?")
                 .setMessage("Your citizens want " + res.getAmount() +
-                        " of " + res.getType().toLowerCase() + ". Continue?")
+                        " of " + res.getType() + ". Continue?")
                 .setCancelable(false)
                 .setPositiveButton("Yes",
                         new DialogInterface.OnClickListener() {
@@ -398,7 +397,7 @@ public class MainActivity extends AppCompatActivity {
         alert.show();
     }
 
-    private void upgradeBuilding(String type){
+    private void upgradeBuilding(ResourceTypes type){
         Building selectedBuilding = this.selectedPlanet.getBuildings().get(type);
         int cost = selectedBuilding.getCost();
         Resource res = empire.getResources().get(type);

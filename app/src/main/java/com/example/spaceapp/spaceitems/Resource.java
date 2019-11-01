@@ -1,10 +1,12 @@
 package com.example.spaceapp.spaceitems;
 
+import com.example.spaceapp.spaceitems.types.ResourceTypes;
+
 public class Resource {
-    private String type;
+    private ResourceTypes type;
     private int amount;
 
-    public Resource(String resourceType, int resourceAmount){
+    public Resource(ResourceTypes resourceType, int resourceAmount){
         this.type = resourceType;
         this.amount = resourceAmount;
     }
@@ -13,7 +15,7 @@ public class Resource {
         return this.amount;
     }
 
-    public String getType(){
+    public ResourceTypes getType(){
         return this.type;
     }
 

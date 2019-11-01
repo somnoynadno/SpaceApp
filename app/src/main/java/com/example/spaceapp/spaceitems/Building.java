@@ -1,14 +1,16 @@
 package com.example.spaceapp.spaceitems;
 
+import com.example.spaceapp.spaceitems.types.ResourceTypes;
+
 public class Building {
-    private String type;
+    private ResourceTypes type;
     private Planet planet;
     private int cost;
     private int level;
     private boolean producingStatus;
     private Resource tempStorage;
 
-    public Building(Planet myPlanet, String buildingType){
+    public Building(Planet myPlanet, ResourceTypes buildingType){
         this.planet = myPlanet;
         this.type = buildingType;
         this.cost = 200; // by default
@@ -21,7 +23,7 @@ public class Building {
         return this.planet;
     }
 
-    public String getType(){
+    public ResourceTypes getType(){
         return this.type;
     }
 

@@ -9,7 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Empire {
     private String name;
     private Map<Integer, Planet> planets;
-    private Map<String, Resource> resourcesMap;
+    private Map<ResourceTypes, Resource> resourcesMap;
     private final int minRange = 200;
     private final int maxRange = 300;
 
@@ -18,17 +18,17 @@ public class Empire {
         this.planets = new HashMap();
 
         // generate random amounts by default
-        Resource wood = new Resource(ResourceTypes.WOOD.getValue(),
+        Resource wood = new Resource(ResourceTypes.WOOD,
                 ThreadLocalRandom.current().nextInt(minRange, maxRange + 1));
-        Resource stone = new Resource(ResourceTypes.STONE.getValue(),
+        Resource stone = new Resource(ResourceTypes.STONE,
                 ThreadLocalRandom.current().nextInt(minRange, maxRange + 1));
-        Resource water = new Resource(ResourceTypes.WATER.getValue(),
+        Resource water = new Resource(ResourceTypes.WATER,
                 ThreadLocalRandom.current().nextInt(minRange, maxRange + 1));
 
         this.resourcesMap = new HashMap();
-        this.resourcesMap.put(ResourceTypes.WOOD.getValue(), wood);
-        this.resourcesMap.put(ResourceTypes.STONE.getValue(), stone);
-        this.resourcesMap.put(ResourceTypes.WATER.getValue(), water);
+        this.resourcesMap.put(ResourceTypes.WOOD, wood);
+        this.resourcesMap.put(ResourceTypes.STONE, stone);
+        this.resourcesMap.put(ResourceTypes.WATER, water);
     }
 
     public String getName(){
@@ -43,7 +43,7 @@ public class Empire {
         return this.planets;
     }
 
-    public Map<String, Resource> getResources(){
+    public Map<ResourceTypes, Resource> getResources(){
         return this.resourcesMap;
     }
 }
